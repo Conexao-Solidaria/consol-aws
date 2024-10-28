@@ -1,42 +1,75 @@
-module "vpc_consol" {
+module "vpc" {
   source         = "../../modules/vpc"
   vpc_cidr_block = "10.0.0.0/26"
-  vpc_name       = "vpc_consol"
+  vpc_name       = "vpc"
 }
 
-module "subnets_consol" {
+module "subnets" {
   source            = "../../modules/vpc/subnets"
-  vpc_id            = module.vpc_consol.vpc_id
-  vpc_name          = module.vpc_consol.vpc_name
+  vpc_id            = module.vpc.vpc_id
+  vpc_name          = module.vpc.vpc_name
   availability_zone = "${var.region}a"
   cidr_frontend     = "10.0.0.0/28"
   cidr_backend      = "10.0.0.16/28"
   cidr_database     = "10.0.0.32/28"
 }
 
-module "igw_consol" {
-  source = "../../modules/vpc/internet_gateway"
-  vpc_id = module.vpc_consol.vpc_id
-  vpc_name = module.vpc_consol.vpc_name
+module "igw" {
+  source   = "../../modules/vpc/internet_gateway"
+  vpc_id   = module.vpc.vpc_id
+  vpc_name = module.vpc.vpc_name
 }
 
-module "route_table_consol" {
-  source = "../../modules/vpc/route_table"
-  vpc_id = module.vpc_consol.vpc_id
-  vpc_name = module.vpc_consol.vpc_name
+module "route_table" {
+  source                  = "../../modules/vpc/route_table"
+  vpc_id                  = module.vpc.vpc_id
+  vpc_name                = module.vpc.vpc_name
   public_route_cidr_block = "0.0.0.0/0"
-  igw_id = module.igw_consol.igw_id
-  frontend_subnet_id = module.subnets_consol.subnet_frontend_id
-  backend_subnet_id = module.subnets_consol.subnet_backend_id
-  database_subnet_id = module.subnets_consol.subnet_database_id
+  igw_id                  = module.igw.igw_id
+  frontend_subnet_id      = module.subnets.frontend_subnet_id
+  backend_subnet_id       = module.subnets.backend_subnet_id
+  database_subnet_id      = module.subnets.database_subnet_id
+}
+
+module "sg_frontend" {
+  source = "../../modules/ec2/frontend/security_group"
+  vpc_id = module.vpc.vpc_id
+}
+
+module "lb_frontend" {
+  source    = "../../modules/ec2/frontend/load_balancer"
+  vpc_id    = module.vpc.vpc_id
+  subnet_id = module.subnets.frontend_subnet_id
+  sg_id     = module.sg_frontend.sg_id
 }
 
 module "ec2_frontend" {
-  source = "../../modules/ec2/frontend"
-  vpc_name = module.vpc_consol.vpc_name
-  key_name = var.key_name
+  source        = "../../modules/ec2/frontend"
+  ami_id        = "ami-0866a3c8686eaeeba"
   instance_type = "t2.small"
-  ami = "ami-0c55b159cbfafe1fe"
-  security_group_id = module.ec2_security_group_consol.security_group_id
-  frontend_subnet_id = module.subnets_consol.subnet_frontend_id
+  subnet_id     = module.subnets.frontend_subnet_id
+  sg_id         = module.sg_frontend.sg_id
+  key_name      = var.key_name
+}
+
+module "sg_backend" {
+  source         = "../../modules/ec2/backend/security_group"
+  vpc_id         = module.vpc.vpc_id
+  sg_frontend_id = module.sg_frontend.sg_id
+}
+
+module "lb_backend" {
+  source    = "../../modules/ec2/backend/load_balancer"
+  vpc_id    = module.vpc.vpc_id
+  subnet_id = module.subnets.backend_subnet_id
+  sg_id     = module.sg_backend.sg_id
+}
+
+module "ec2_backend" {
+  source        = "../../modules/ec2/backend"
+  ami_id        = "ami-0866a3c8686eaeeba"
+  instance_type = "t2.small"
+  subnet_id     = module.subnets.backend_subnet_id
+  sg_id         = module.sg_backend.sg_id
+  key_name      = var.key_name
 }

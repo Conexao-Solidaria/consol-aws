@@ -4,7 +4,7 @@ variable "vpc_cidr_block" {
 }
 
 variable "vpc_name" {
-  default     = "vpc_consol"
+  default     = "vpc"
   type        = string
   description = "The name of the VPC"
 }

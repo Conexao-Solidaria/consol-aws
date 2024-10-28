@@ -18,17 +18,32 @@ variable "vpc_name" {
   type        = string
 }
 
-variable "frontend_subnet_id" {
+variable "frontend_subnet1_id" {
   description = "The ID of the frontend subnet"
   type        = string
 }
 
-variable "backend_subnet_id" {
+variable "frontend_subnet2_id" {
+  description = "The ID of the frontend subnet"
+  type        = string
+}
+
+variable "backend_subnet1_id" {
   description = "The ID of the backend subnet"
   type        = string
 }
 
-variable "database_subnet_id" {
+variable "backend_subnet2_id" {
+  description = "The ID of the backend subnet"
+  type        = string
+}
+
+variable "database_subnet1_id" {
+  description = "The ID of the database subnet"
+  type        = string
+}
+
+variable "database_subnet2_id" {
   description = "The ID of the database subnet"
   type        = string
 }

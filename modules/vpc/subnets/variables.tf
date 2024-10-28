@@ -23,7 +23,12 @@ variable "vpc_name" {
   description = "The name of the VPC"
 }
 
-variable "availability_zone" {
+variable "availability_zone1" {
+  type        = string
+  description = "The availability zone for the subnet"
+}
+
+variable "availability_zone2" {
   type        = string
   description = "The availability zone for the subnet"
 }

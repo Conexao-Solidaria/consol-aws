@@ -11,8 +11,13 @@ resource "aws_route_table" "rt_public" {
   }
 }
 
-resource "aws_route_table_association" "public_subnet_frontend" {
-  subnet_id      = var.frontend_subnet_id
+resource "aws_route_table_association" "public_subnet_frontend1" {
+  subnet_id      = var.frontend_subnet1_id
+  route_table_id = aws_route_table.rt_public.id
+}
+
+resource "aws_route_table_association" "public_subnet_frontend2" {
+  subnet_id      = var.frontend_subnet2_id
   route_table_id = aws_route_table.rt_public.id
 }
 
@@ -24,7 +29,7 @@ resource "aws_eip" "nat_eip" {
 
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = var.frontend_subnet_id
+  subnet_id     = var.frontend_subnet1_id
 
   tags = {
     Name = "NAT Gateway"
@@ -44,12 +49,22 @@ resource "aws_route_table" "rt_private" {
   }
 }
 
-resource "aws_route_table_association" "private_subnet_backend" {
-  subnet_id      = var.backend_subnet_id
+resource "aws_route_table_association" "private_subnet_backend1" {
+  subnet_id      = var.backend_subnet1_id
   route_table_id = aws_route_table.rt_private.id
 }
 
-resource "aws_route_table_association" "private_subnet_database" {
-  subnet_id      = var.database_subnet_id
+resource "aws_route_table_association" "private_subnet_backend2" {
+  subnet_id      = var.backend_subnet2_id
+  route_table_id = aws_route_table.rt_private.id
+}
+
+resource "aws_route_table_association" "private_subnet_database1" {
+  subnet_id      = var.database_subnet1_id
+  route_table_id = aws_route_table.rt_private.id
+}
+
+resource "aws_route_table_association" "private_subnet_database2" {
+  subnet_id      = var.database_subnet2_id
   route_table_id = aws_route_table.rt_private.id
 }

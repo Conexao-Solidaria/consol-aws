@@ -3,11 +3,11 @@ resource "aws_lb" "lb_frontend" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.sg_id]
-  subnets            = [var.subnet_id]
+  subnets            = [var.subnet1_id, var.subnet2_id]
 
   enable_deletion_protection = false
   tags = {
-    Name = "lb_frontend"
+    Name = "lb-frontend"
   }
 }
 
@@ -27,8 +27,10 @@ resource "aws_lb_target_group" "tg_frontend" {
     unhealthy_threshold = 2
   }
 
+  target_type = "instance"
+
   tags = {
-    Name = "tg_backend"
+    Name = "tg-frontend"
   }
 }
 
@@ -41,4 +43,16 @@ resource "aws_lb_listener" "listener_frontend" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tg_frontend.arn
   }
+}
+
+resource "aws_lb_target_group_attachment" "tg_attachment1" {
+  target_group_arn = aws_lb_target_group.tg_frontend.arn
+  target_id        = var.frontend_instance1_id
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "tg_attachment2" {
+  target_group_arn = aws_lb_target_group.tg_frontend.arn
+  target_id        = var.frontend_instance2_id
+  port             = 80
 }

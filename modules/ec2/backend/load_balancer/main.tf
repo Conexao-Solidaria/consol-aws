@@ -3,19 +3,20 @@ resource "aws_lb" "lb_backend" {
   internal           = true
   load_balancer_type = "application"
   security_groups    = [var.sg_id]
-  subnets            = [var.subnet_id]
+  subnets            = [var.subnet1_id, var.subnet2_id]
 
   enable_deletion_protection = false
   tags = {
-    Name = "lb_backend"
+    Name = "lb-backend"
   }
 }
 
 resource "aws_lb_target_group" "tg_backend" {
-  name     = "tg-backend"
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name             = "tg-backend"
+  port             = 8080
+  protocol         = "HTTP"
+  protocol_version = "HTTP1"
+  vpc_id           = var.vpc_id
 
   health_check {
     path                = "/health"
@@ -26,6 +27,8 @@ resource "aws_lb_target_group" "tg_backend" {
     healthy_threshold   = 5
     unhealthy_threshold = 2
   }
+
+  target_type = "instance"
 
   tags = {
     Name = "tg_backend"
@@ -41,4 +44,16 @@ resource "aws_lb_listener" "listener_backend" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tg_backend.arn
   }
+}
+
+resource "aws_lb_target_group_attachment" "tg_attachment1" {
+  target_group_arn = aws_lb_target_group.tg_backend.arn
+  target_id        = var.backend_instance1_id
+  port             = 8080
+}
+
+resource "aws_lb_target_group_attachment" "tg_attachment2" {
+  target_group_arn = aws_lb_target_group.tg_backend.arn
+  target_id        = var.backend_instance2_id
+  port             = 8080
 }

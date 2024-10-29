@@ -1,14 +1,29 @@
-variable "cidr_frontend" {
+variable "cidr_frontend1" {
   type        = string
   description = "The CIDR block for the frontend subnet"
 }
 
-variable "cidr_backend" {
+variable "cidr_backend1" {
   type        = string
   description = "The CIDR block for the backend subnet"
 }
 
-variable "cidr_database" {
+variable "cidr_database1" {
+  type        = string
+  description = "The CIDR block for the database subnet"
+}
+
+variable "cidr_frontend2" {
+  type        = string
+  description = "The CIDR block for the frontend subnet"
+}
+
+variable "cidr_backend2" {
+  type        = string
+  description = "The CIDR block for the backend subnet"
+}
+
+variable "cidr_database2" {
   type        = string
   description = "The CIDR block for the database subnet"
 }

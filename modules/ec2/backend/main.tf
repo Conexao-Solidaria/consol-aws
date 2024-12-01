@@ -6,7 +6,7 @@ resource "aws_instance" "ec2_backend1" {
   vpc_security_group_ids = [var.sg_id]
 
   tags = {
-    Name = "ec2_frontend1"
+    Name = "ec2_backend1"
   }
 }
 
@@ -18,6 +18,6 @@ resource "aws_instance" "ec2_backend2" {
   vpc_security_group_ids = [var.sg_id]
 
   tags = {
-    Name = "ec2_frontend2"
+    Name = "ec2_backend2"
   }
 }

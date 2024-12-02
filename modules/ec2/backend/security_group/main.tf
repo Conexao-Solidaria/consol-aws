@@ -8,6 +8,14 @@ resource "aws_security_group" "sg_backend" {
   }
 
   ingress {
+    description = "Allow SSH inbound traffic from public EC2 instances"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [var.sg_frontend_id]
+  }
+
+  ingress {
     description     = "Allow HTTP from frontend"
     from_port       = 8080
     to_port         = 8080

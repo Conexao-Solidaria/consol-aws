@@ -89,3 +89,18 @@ module "lb_backend" {
   backend_instance2_id = module.ec2_backend.ec2_backend2_instance_id
 }
 
+
+module "sg_database" {
+  source         = "../../modules/ec2/database/security_group"
+  vpc_id         = module.vpc.vpc_id
+  sg_frontend_id = module.sg_frontend.sg_id
+}
+
+module "ec2_database" {
+  source        = "../../modules/ec2/database"
+  ami_id        = "ami-0866a3c8686eaeeba"
+  instance_type = "t2.small"
+  subnet1_id    = module.subnets.database_subnet1_id
+  sg_id         = module.sg_backend.sg_id
+  key_name      = var.key_name
+}

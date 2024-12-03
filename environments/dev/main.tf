@@ -94,6 +94,7 @@ module "sg_database" {
   source         = "../../modules/ec2/database/security_group"
   vpc_id         = module.vpc.vpc_id
   sg_frontend_id = module.sg_frontend.sg_id
+  sg_backend_id  = module.sg_backend.sg_id
 }
 
 module "ec2_database" {
@@ -101,6 +102,6 @@ module "ec2_database" {
   ami_id        = "ami-0866a3c8686eaeeba"
   instance_type = "t2.small"
   subnet1_id    = module.subnets.database_subnet1_id
-  sg_id         = module.sg_backend.sg_id
+  sg_id         = module.sg_database.sg_id
   key_name      = var.key_name
 }

@@ -8,6 +8,22 @@ resource "aws_security_group" "sg_database" {
   }
 
   ingress {
+    description = "Allow MySQL access from Spring Boot application"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups =  [var.sg_backend_id]
+  }
+
+  ingress {
+    description = "Allow SSH from frontend"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [var.sg_frontend_id]
+  }
+
+  ingress {
     description     = "Allow HTTP from frontend"
     from_port       = 8080
     to_port         = 8080
